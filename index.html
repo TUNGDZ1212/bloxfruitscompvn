@@ -21,7 +21,64 @@
             --silver: #c0c0c0;
             --bronze: #cd7f32;
         }
+#loading-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: #000; /* Nền đen tuyền */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.8s ease; /* Hiệu ứng mờ dần khi xong */
+}
 
+.loading-content {
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+}
+
+.new-year-text {
+    color: #ffcc00;
+    font-size: 45px;
+    font-weight: bold;
+    letter-spacing: 5px;
+    margin-bottom: 5px;
+    /* Hiệu ứng phát sáng vàng rực */
+    text-shadow: 0 0 10px #ffcc00, 0 0 20px #ffaa00, 0 0 40px #ff8800;
+    animation: glowPulse 2s infinite alternate;
+}
+
+.sub-text {
+    color: #ffffff;
+    font-size: 14px;
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+    opacity: 0.8;
+}
+
+/* Thanh Progress Bar */
+.progress-main-layout {
+    width: 250px;
+    height: 3px;
+    background: #222;
+    margin: 0 auto;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #ffcc00, #ffee00);
+    box-shadow: 0 0 10px #ffcc00;
+}
+
+/* Hiệu ứng chữ đập nhẹ */
+@keyframes glowPulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.03); }
+}
         body {
             display: flex;
             flex-direction: column;
@@ -61,9 +118,23 @@
             border-radius: 4px;
         }
         .tab-item.active { background-color: white; color: black; }
+        
+        /* --- HIỆU ỨNG HOA ĐÀO (SAKURA) --- */
+        .sakura {
+            position: fixed; top: -10%; z-index: 9999;
+            pointer-events: none;
+            background: #ffb7c5;
+            border-radius: 100% 0 100% 0;
+            filter: blur(1px);
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
 
         /* --- SEARCH & DISCORD HEADER --- */
-        .search-container { margin-left: auto; position: relative; margin-right: 15px; }
+        .search-main-layout { margin-left: auto; position: relative; margin-right: 15px; }
         .search-bar {
             background: #1a1b1f; border: 1px solid #333; color: white;
             padding: 8px 15px; border-radius: 4px; width: 180px; transition: 0.3s; font-size: 13px;
@@ -93,12 +164,109 @@
         .sub-nav span { cursor: pointer; transition: 0.2s; }
         .sub-nav span:hover, .sub-nav span.active-sub { color: var(--blue-vn); }
 
-        /* --- CONTAINER --- */
-        .container { flex: 1; max-width: 1100px; margin: 30px auto; padding: 0 20px; width: 100%; box-sizing: border-box; }
+       /* Bao quát toàn bộ để không bao giờ bị tràn ngang */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden; /* Chặn tràn ngang tuyệt đối */
+    cursor: url('https://cur.cursors-4u.net/games/gam-4/gam373.cur'), auto !important;
+}
 
-        #home-view, #ranking-view, #coming-soon-view {
-            display: none; opacity: 0; transform: translateY(10px); transition: 0.4s ease;
-        }
+/* Sửa lại container chính */
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding: 20px;
+    width: 95%; /* Sử dụng % thay vì px cố định */
+    max-width: 1100px; /* Giới hạn độ rộng tối đa */
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Sửa Card Toàn Quốc cho cân đối */
+.giant-card {
+    width: 100% !important; /* Để nó tự co giãn theo container */
+    max-width: 600px !important; /* Nhưng không to quá mức này */
+    margin: 0 auto;
+}
+
+.giant-card .card-thumb {
+    height: auto !important;
+    aspect-ratio: 16 / 9; /* Giữ tỉ lệ lá cờ chuẩn */
+}
+
+/* Sửa hàng 3 miền bên dưới */
+.sub-regions-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    width: 100%;
+}
+
+/* Fix lỗi cho điện thoại/màn hình nhỏ */
+@media (max-width: 768px) {
+    .sub-regions-row {
+        grid-template-columns: 1fr; /* Xếp chồng 1 cột trên mobile */
+    }
+    .logo {
+        font-size: 1.2rem !important; /* Giảm cỡ chữ logo tránh tràn header */
+    }
+}
+
+/* Màu sắc chữ footer */
+.footer-north { color: #ef4444; }
+.footer-nam { color: #10b981; }
+.footer-trung { color: #f59e0b; }
+
+/* Hiệu ứng chung cho Card */
+.region-card {
+    background: #0f1014;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.region-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: #fff !important;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+}
+
+.card-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-footer {
+    padding: 15px;
+    text-align: center;
+    font-weight: 900;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Responsive cho điện thoại */
+@media (max-width: 900px) {
+    .giant-card { width: 100% !important; }
+    .sub-regions-row { grid-template-columns: 1fr; }
+}
+
+        /* Chỉ ẩn Ranking và Coming Soon, còn Home thì để nó tự điều khiển bằng class view-active */
+#ranking-view, #coming-soon-view {
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: 0.4s ease;
+}
+
+/* Thêm dòng này để home-view hiển thị chuẩn */
+#home-view {
+    display: flex; /* Vì main-layout dùng flex để căn giữa */
+}
         .view-active { display: block !important; opacity: 1 !important; transform: translateY(0) !important; }
 
         .grid-layout { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
@@ -135,11 +303,92 @@
         .btn-dc { background: #5865f2; }
 
         footer { padding: 30px 0; text-align: center; color: var(--text-dim); font-size: 12px; }
+        /* --- ĐOẠN CODE PHÓNG TO GIAO DIỆN --- */
+.logo { font-size: 1.8rem !important; }
+.tab-item { font-size: 16px !important; padding: 10px 25px !important; }
+.new-year-text { font-size: 70px !important; }
+.sub-text { font-size: 20px !important; }
+.progress-main-layout { width: 450px !important; height: 5px !important; }
+.card-thumb { height: 160px !important; }
+.card-footer { font-size: 14px !important; padding: 15px !important; }
+.p-name { font-size: 18px !important; }
+.avatar { width: 55px !important; height: 55px !important; }
+.rank-row { padding: 15px 25px !important; }
+.header-discord-btn { font-size: 15px !important; padding: 10px 20px !important; }
+/* Nút Discord Gaming */
+.header-discord-btn {
+    background: linear-gradient(45deg, #5865f2, #7289da) !important;
+    box-shadow: 0 0 15px rgba(88, 101, 242, 0.5);
+    transition: all 0.3s ease-in-out !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.header-discord-btn:hover {
+    box-shadow: 0 0 25px rgba(88, 101, 242, 0.8);
+    transform: translateY(-2px) scale(1.05);
+}
+
+/* Nút Youtube & Các nút hành động */
+.btn-yt {
+    background: linear-gradient(45deg, #ff0000, #cc0000) !important;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+}
+
+.btn-dc {
+    background: linear-gradient(45deg, #5865f2, #4752c4) !important;
+    box-shadow: 0 0 15px rgba(88, 101, 242, 0.4);
+}
+
+.btn-action:hover {
+    filter: brightness(1.2);
+    box-shadow: 0 0 20px currentColor;
+    transform: scale(1.1);
+}
+.logo {
+    text-transform: uppercase;
+    font-weight: 900;
+    color: #fff;
+    /* Hiệu ứng tách màu RGB */
+    text-shadow: 2px 0px 0px #ff0000, -2px 0px 0px #00ffff !important;
+    letter-spacing: 2px;
+}
+
+.vn-badge {
+    background: red;
+    padding: 2px 6px;
+    border-radius: 3px;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+}
+.region-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    border: 1px solid #333 !important;
+}
+
+.region-card:hover {
+    border-color: #fff !important;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.15);
+}
+
+/* Màu viền riêng cho từng khu vực khi hover */
+.region-card:nth-child(1):hover { border-color: var(--blue-vn) !important; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+.region-card:nth-child(2):hover { border-color: var(--red-north) !important; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+.region-card:nth-child(3):hover { border-color: var(--green-south) !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+.region-card:nth-child(4):hover { border-color: var(--orange-central) !important; box-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
     </style>
 </head>
 <body>
 
 <header>
+    <div id="loading-screen">
+    <div class="loading-content">
+        <h1 class="new-year-text">CHÚC MỪNG NĂM MỚI</h1>
+        <p class="sub-text">BLOX FRUITS COMPETITIVE VN</p>
+        <div class="progress-main-layout">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+    </div>
     <div class="logo" onclick="goHome()">
         BLOX FRUITS COMPETITIVE VIETNAM <span class="vn-badge">VN</span>
     </div>
@@ -147,7 +396,7 @@
         <div id="tab-players" class="tab-item active" onclick="switchMainTab('players')">PLAYERS</div>
         <div id="tab-crews" class="tab-item" onclick="switchMainTab('crews')">CREWS</div>
     </div>
-    <div class="search-container">
+    <div class="search-main-layout">
         <input type="text" class="search-bar" placeholder="Search..." oninput="handleSearch(this.value)">
         <div id="search-results" class="search-results-dropdown"></div>
     </div>
@@ -163,28 +412,37 @@
     <span id="sub-macros" onclick="showCS('MACROS')">MACROS</span>
 </div>
 
-<div class="container">
-    <div id="home-view" class="view-active">
-        <h2 id="grid-title" style="text-align: center; font-size: 14px; margin-bottom: 25px;">RANKINGS (PLAYERS)</h2>
-        <div class="grid-layout">
-            <div class="region-card" onclick="showLeaderboard('Toàn quốc')">
-                <div class="card-thumb"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTb7-hkzCnFDwrSD9uN2ZyjQU_F6R5DLy3UwQ&s"></div>
-                <div class="card-footer" style="color: var(--blue-vn);">TOÀN QUỐC (VIỆT NAM)</div>
+<div class="main-layout view-active" id="home-view">
+    <div class="national-section">
+        <div class="region-card giant-card" onclick="showLeaderboard('Toàn quốc')">
+            <div class="card-thumb">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Vietnam.svg">
             </div>
-            <div class="region-card" onclick="showLeaderboard('Miền Bắc')">
-                <div class="card-thumb"><img src="https://vj-prod-website-cms.s3.ap-southeast-1.amazonaws.com/2294820181canhdepmienbac-1711070654909.jpg"></div>
-                <div class="card-footer" style="color: var(--red-north);">MIỀN BẮC</div>
-            </div>
-            <div class="region-card" onclick="showLeaderboard('Miền Nam')">
-                <div class="card-thumb"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_1pvXGHuiBRpQABzj2Ps-io8HhMm-AOqSpQ&s"></div>
-                <div class="card-footer" style="color: var(--green-south);">MIỀN NAM</div>
-            </div>
-            <div class="region-card" onclick="showLeaderboard('Miền Trung')">
-                <div class="card-thumb"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMzyIbWCbPSLKcBPsw1BLZ6wi3ZHPwntoJ4A&s"></div>
-                <div class="card-footer" style="color: var(--orange-central);">MIỀN TRUNG</div>
-            </div>
+            <div class="card-footer">TOÀN QUỐC (VIỆT NAM)</div>
         </div>
     </div>
+
+    <div class="sub-regions-row">
+        <div class="region-card" onclick="showLeaderboard('MIỀN BẮC')">
+            <div class="card-thumb"><img src="https://vj-prod-website-cms.s3.ap-southeast-1.amazonaws.com/2294820181canhdepmienbac-1711070654909.jpg"></div>
+            <div class="card-footer footer-north">MIỀN BẮC</div>
+        </div>
+        <div class="region-card" onclick="showLeaderboard('MIỀN NAM')">
+            <div class="card-thumb"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_1pvXGHuiBRpQABzj2Ps-io8HhMm-AOqSpQ&s"></div>
+            <div class="card-footer footer-nam">MIỀN NAM</div>
+        </div>
+        <div class="region-card" onclick="showLeaderboard('MIỀN TRUNG')">
+            <div class="card-thumb"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMzyIbWCbPSLKcBPsw1BLZ6wi3ZHPwntoJ4A&s"></div>
+            <div class="card-footer footer-trung">MIỀN TRUNG</div>
+        </div>
+    </div>
+</div>
+
+<div class="main-layout" id="ranking-view" style="display:none;">
+    <button onclick="goHome()" style="background:none; border:none; color:var(--blue-vn); cursor:pointer; margin-bottom:15px; font-weight:bold; align-self: flex-start;">← BACK</button>
+    <h2 id="ranking-title" style="text-transform: uppercase; font-size: 20px; width: 100%;"></h2>
+    <div id="ranking-list" style="width: 100%;"></div>
+</div>
 
     <div id="ranking-view">
         <button onclick="goHome()" style="background:none; border:none; color:var(--blue-vn); cursor:pointer; margin-bottom:15px; font-weight:bold;">← BACK</button>
@@ -201,10 +459,46 @@
 </div>
 
 <footer>
-    © 2026 <span>Blox Fruits Competitive VietNam.</span> All rights reserved.
+    © 2026 <span>Blox Fruits Competitive VietNam.</span> Tất cả đều được sắp xếp theo bloxfruitscomp nên sẽ có sai xót, join discord ở góc phải để góp ý và vào crew.
 </footer>
 
 <script>
+    window.addEventListener('load', () => {
+    let width = 0;
+    const bar = document.getElementById('progress-bar');
+    const screen = document.getElementById('loading-screen');
+
+    const loadingInterval = setInterval(() => {
+        if (width >= 100) {
+            clearInterval(loadingInterval);
+            // Đợi một chút rồi ẩn màn hình
+            setTimeout(() => {
+                screen.style.opacity = '0';
+                setTimeout(() => {
+                    screen.style.display = 'none';
+                }, 800);
+            }, 500);
+        } else {
+            // Chạy ngẫu nhiên cho giống đang load thật
+            width += Math.floor(Math.random() * 10) + 1;
+            if (width > 100) width = 100;
+            bar.style.width = width + '%';
+        }
+    }, 100); // Tốc độ chạy thanh bar
+});
+     // --- HIỆU ỨNG HOA ĐÀO ---
+    function createSakura() {
+        const sakura = document.createElement('div');
+        sakura.classList.add('sakura');
+        sakura.style.left = Math.random() * 100 + 'vw';
+        sakura.style.width = sakura.style.height = Math.random() * 10 + 5 + 'px';
+        sakura.style.animationDuration = Math.random() * 3 + 4 + 's';
+        sakura.style.opacity = Math.random() * 0.5 + 0.5;
+        document.body.appendChild(sakura);
+        setTimeout(() => sakura.remove(), 7000);
+    }
+    setInterval(createSakura, 300);
+    
     // --- DATABASE TỔNG HỢP ---
     const database = {
         players: {
@@ -216,17 +510,14 @@
                 { name: 'Ewiges', sub: 'Global Rank', yt: '#', dc: 'https://discord.com/users/1385946599787593749', avatar: 'https://bloxfruitscomp.com/api/pfp?id=1385946599787593749', flag: 'https://flagcdn.com/w40/vn.png' },
                 { name: 'Phuong', sub: 'Global Rank', yt: '#', dc: 'https://discord.com/users/932563796164231168', avatar: 'https://bloxfruitscomp.com/api/pfp?id=932563796164231168', flag: 'https://flagcdn.com/w40/vn.png' }
             ],
-            "Miền Bắc": [
-               { name: 'Player Bắc', sub: 'Top MB', yt: '#', dc: '#', avatar: 'https://via.placeholder.com/45', flag: 'https://flagcdn.com/w40/vn.png' }
+            "Miền Bắc": [],
+            "MIỀN TRUNG": [
+               { name: 'Nguyễn Tuấn', sub: 'Top Miền Trung', yt: '#', dc: 'https://discord.com/users/1471609801174814791', avatar: 'https://i.pinimg.com/236x/17/4f/97/174f97c9f9637c0d2ccb0e8187e72bcb.jpg', flag: 'https://flagcdn.com/w40/vn.png' }
             ],
-            "Miền Trung": [
-               { name: 'Player Trung', sub: 'Top MT', yt: '#', dc: '#', avatar: 'https://via.placeholder.com/45', flag: 'https://flagcdn.com/w40/vn.png' }
-            ],
-            "Miền Nam": [
+            "MIỀN NAM": [
                { name: 'Boosh', sub: 'Top Miền Nam', yt: '#', dc: 'https://discord.com/users/880770920430567485', avatar: 'https://bloxfruitscomp.com/api/pfp?id=880770920430567485', flag: 'https://flagcdn.com/w40/vn.png' },
-               { name: 'Ewiges', sub: 'Top Miền Nam', yt: '#', dc: 'https://discord.com/users/1385946599787593749', avatar: 'https://bloxfruitscomp.com/api/pfp?id=1385946599787593749', flag: 'https://flagcdn.com/w40/vn.png' },
-               { name: 'Noin', sub: 'Top Miền Nam', yt: '#', dc: 'https://discord.com/users/1471559432994553997', avatar: 'https://media.discordapp.net/attachments/1471558086144561193/1471559047273648377/04792bebd8aceee33d83ded0bf6e99fb.jpg?ex=698f5fa9&is=698e0e29&hm=03fcd133ec15a640974c2be817da5fbecece9d58e0c12192071b6334504fa40b&=&format=webp', flag: 'https://flagcdn.com/w40/vn.png' }
-            ]
+               { name: 'Gohan', sub: 'Top Miền Nam', yt: '#', dc: '#', avatar: 'https://bloxfruitscomp.com/api/pfp?id=1385946599787593749', flag: 'https://flagcdn.com/w40/vn.png' },
+               { name: 'Ewiges', sub: 'Top Miền Nam', yt: '#', dc: 'https://discord.com/users/1385946599787593749', avatar: 'https://bloxfruitscomp.com/images/Profiles.png', flag: 'https://flagcdn.com/w40/vn.png' },            ]
         },
         crews: {
             "Toàn quốc": [],
@@ -329,14 +620,22 @@
 
     // --- ĐIỀU HƯỚNG ---
     function transitionTo(id) {
-        ['home-view', 'ranking-view', 'coming-soon-view'].forEach(v => {
-            document.getElementById(v).classList.remove('view-active');
-            document.getElementById(v).style.display = 'none';
-        });
-        const target = document.getElementById(id);
-        target.style.display = 'block';
+    const views = ['home-view', 'ranking-view', 'coming-soon-view'];
+    views.forEach(v => {
+        const el = document.getElementById(v);
+        if (el) {
+            el.classList.remove('view-active');
+            el.style.display = 'none';
+        }
+    });
+
+    const target = document.getElementById(id);
+    if (target) {
+        // Nếu là home hoặc ranking thì dùng flex để căn giữa, còn lại dùng block
+        target.style.display = (id === 'coming-soon-view') ? 'block' : 'flex';
         setTimeout(() => target.classList.add('view-active'), 50);
     }
+}
 
     function goHome() {
         transitionTo('home-view');
@@ -353,8 +652,9 @@
 
     // Click ra ngoài để đóng search
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('.search-container')) document.getElementById('search-results').style.display = 'none';
+        if (!e.target.closest('.search-main-layout')) document.getElementById('search-results').style.display = 'none';
     });
+    
 </script>
 
 </body>
