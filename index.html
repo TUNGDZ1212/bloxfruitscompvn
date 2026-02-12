@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blox Fruits Competitive Vietnam</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #050505;
+            --bg-nav: #16171b;
+            --bg-card: #0f1014;
+            --text-main: #ffffff;
+            --text-dim: #888888;
+            --blue-vn: #3b82f6;
+            --red-north: #ef4444;
+            --green-south: #10b981;
+            --orange-central: #f59e0b;
+            /* Rank Colors */
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Segoe UI', sans-serif;
+            overflow-y: scroll;
+        }
+
+        header {
+            background-color: var(--bg-nav);
+            padding: 0 10%;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #222;
+            position: sticky; top: 0; z-index: 1000;
+        }
+
+        .logo { font-weight: 900; font-size: 1.1rem; letter-spacing: 1px; margin-right: 30px; cursor: pointer; text-transform: uppercase; }
+
+        .main-tabs { display: flex; height: 100%; gap: 5px; }
+        .tab-item {
+            display: flex; align-items: center; padding: 0 20px;
+            color: var(--text-dim); font-weight: bold; font-size: 13px;
+            cursor: pointer; transition: 0.3s; text-transform: uppercase;
+        }
+        .tab-item.active { background-color: white; color: black; border-radius: 4px; height: 36px; align-self: center; }
+
+        /* --- SEARCH DROP-DOWN --- */
+        .search-container { margin-left: auto; position: relative; }
+        .search-bar {
+            background: #1a1b1f; border: 1px solid #333; color: white;
+            padding: 8px 15px; border-radius: 4px; width: 220px; transition: 0.3s;
+        }
+        .search-bar:focus { width: 280px; outline: none; border-color: var(--blue-vn); }
+
+        .search-results-dropdown {
+            position: absolute; top: 115%; right: 0; width: 320px;
+            background-color: #16171b; border: 1px solid #333;
+            border-radius: 4px; display: none; z-index: 9999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .result-item { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #222; cursor: pointer; }
+        .result-item:hover { background: #25262b; }
+        .res-avatar { width: 38px; height: 38px; border-radius: 4px; margin-right: 12px; }
+        .result-info { flex: 1; }
+        .result-name { font-weight: 800; font-size: 14px; display: block; }
+        .result-sub { font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
+
+        /* --- SUB NAV --- */
+        .sub-nav {
+            display: flex; justify-content: center; gap: 40px;
+            padding: 15px 0; border-bottom: 1px solid #111;
+            font-size: 11px; font-weight: bold; color: var(--text-dim);
+            text-transform: uppercase;
+        }
+        .sub-nav span { cursor: pointer; transition: 0.2s; }
+        .sub-nav span.active-sub { color: var(--blue-vn); }
+
+        /* --- CONTAINER & GRID --- */
+        .container { flex: 1; max-width: 1200px; margin: 30px auto; padding: 0 20px; width: 100%; box-sizing: border-box; }
+
+        #home-view, #ranking-view, #coming-soon-view {
+            display: none; opacity: 0; transform: translateY(10px); transition: 0.4s ease;
+        }
+        .view-active { display: block !important; opacity: 1 !important; transform: translateY(0) !important; }
+
+        .grid-layout { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .region-card { background: var(--bg-card); border: 1px solid #1e1f24; border-radius: 4px; overflow: hidden; cursor: pointer; transition: 0.3s; }
+        .region-card:hover { transform: translateY(-5px); filter: brightness(1.2); }
+        .card-thumb { height: 110px; width: 100%; background: #222; overflow: hidden; }
+        .card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .card-footer { padding: 10px; text-align: center; font-size: 11px; font-weight: 800; background: #0c0d10; text-transform: uppercase; }
+
+        /* --- RANKING LIST --- */
+        .rank-row {
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--bg-card); padding: 12px 20px;
+            margin-bottom: 8px; border: 1px solid #1e1f24; border-radius: 4px;
+            transition: 0.3s;
+        }
+        .rank-row:hover { border-color: #444; background: #14151a; }
+        
+        /* Highlight Top 3 */
+        .top-1 { border-left: 4px solid var(--gold) !important; }
+        .top-2 { border-left: 4px solid var(--silver) !important; }
+        .top-3 { border-left: 4px solid var(--bronze) !important; }
+
+        .row-left { display: flex; align-items: center; gap: 15px; }
+        .rank-num { font-weight: 900; font-size: 18px; color: #444; width: 30px; }
+        .top-1 .rank-num { color: var(--gold); }
+        .top-2 .rank-num { color: var(--silver); }
+        .top-3 .rank-num { color: var(--bronze); }
+
+        .avatar { width: 45px; height: 45px; border-radius: 4px; border: 1px solid #333; object-fit: cover; }
+        .p-name { font-weight: 800; font-size: 15px; }
+        .row-right { display: flex; align-items: center; gap: 10px; }
+        .btn-action { padding: 6px 15px; border-radius: 20px; text-decoration: none; color: white; font-size: 10px; font-weight: 900; text-transform: uppercase; }
+        .btn-yt { background: linear-gradient(180deg, #ff0000 0%, #b30000 100%); }
+        .btn-dc { background: linear-gradient(180deg, #5865F2 0%, #3d46a6 100%); }
+
+        footer { padding: 40px 0; text-align: center; color: var(--text-dim); font-size: 13px; }
+        footer span { color: var(--blue-vn); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo" onclick="goHome()">BLOX FRUITS COMPETITIVE VIETNAM </div>
+    <div class="main-tabs">
+        <div id="tab-players" class="tab-item active" onclick="switchMainTab('players')">PLAYERS</div>
+        <div id="tab-crews" class="tab-item" onclick="switchMainTab('crews')">CREWS</div>
+    </div>
+    <div class="search-container">
+        <input type="text" class="search-bar" placeholder="Search..." oninput="handleSearch(this.value)">
+        <div id="search-results" class="search-results-dropdown"></div>
+    </div>
+</header>
+
+<div class="sub-nav">
+    <span id="sub-home" onclick="goHome()" class="active-sub">HOME</span>
+    <span id="sub-events" onclick="showCS('EVENTS')">EVENTS</span>
+    <span id="sub-faq" onclick="showCS('FAQ')">FAQ</span>
+    <span id="sub-macros" onclick="showCS('MACROS')">MACROS</span>
+</div>
+
+<div class="container">
+    <div id="home-view" class="view-active">
+        <h2 id="grid-title" style="text-align: center; font-size: 14px; margin-bottom: 25px;">RANKINGS (PLAYERS)</h2>
+        <div class="grid-layout">
+            <div class="region-card" onclick="showLeaderboard('Toàn quốc')">
+                <div class="card-thumb"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTb7-hkzCnFDwrSD9uN2ZyjQU_F6R5DLy3UwQ&s"></div>
+                <div class="card-footer" style="color: var(--blue-vn);">TOÀN QUỐC (VIỆT NAM)</div>
+            </div>
+            <div class="region-card" onclick="showLeaderboard('Miền Bắc')">
+                <div class="card-thumb"><img src="https://vj-prod-website-cms.s3.ap-southeast-1.amazonaws.com/2294820181canhdepmienbac-1711070654909.jpg"></div>
+                <div class="card-footer" style="color: var(--red-north);">MIỀN BẮC (ASIA)</div>
+            </div>
+            <div class="region-card" onclick="showLeaderboard('Miền Nam')">
+                <div class="card-thumb"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_1pvXGHuiBRpQABzj2Ps-io8HhMm-AOqSpQ&s"></div>
+                <div class="card-footer" style="color: var(--green-south);">MIỀN NAM (EUROPE)</div>
+            </div>
+            <div class="region-card" onclick="showLeaderboard('Miền Trung')">
+                <div class="card-thumb"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMzyIbWCbPSLKcBPsw1BLZ6wi3ZHPwntoJ4A&s"></div>
+                <div class="card-footer" style="color: var(--orange-central);">MIỀN TRUNG (AFRICA)</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ranking-view">
+        <button onclick="goHome()" style="background:none; border:none; color:var(--blue-vn); cursor:pointer; margin-bottom:15px; font-weight:bold;">← BACK</button>
+        <h2 id="ranking-title" style="text-transform: uppercase; font-size: 16px; margin-bottom: 20px;"></h2>
+        <div id="ranking-list"></div>
+    </div>
+
+    <div id="coming-soon-view">
+        <div style="text-align: center; margin-top: 100px;">
+            <h1 id="cs-title" style="font-size: 50px;">FAQ</h1>
+            <p style="color: var(--text-dim);">Coming Soon</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    © 2026 <span>Blox Fruits Competitive VietNam.</span> All rights reserved.
+</footer>
+
+<script>
+    // --- DATABASE TỔNG HỢP ---
+    const database = {
+        players: {
+            "Toàn quốc": [
+                { name: 'Italian', sub: 'Global Rank', yt: 'https://www.youtube.com/@Italuong', dc: 'https://discord.com/users/1119087563962060810', avatar: 'https://bloxfruitscomp.com/api/pfp?id=1119087563962060810', flag: 'https://flagcdn.com/w40/vn.png' },
+                { name: 'Boosh', sub: 'Global Rank', yt: '#', dc: 'https://discord.com/users/880770920430567485', avatar: 'https://bloxfruitscomp.com/api/pfp?id=880770920430567485', flag: 'https://flagcdn.com/w40/vn.png' },
+                { name: 'Benti', sub: 'Global Rank', yt: '#', dc: 'https://discord.com/users/1224659353349521581', avatar: 'https://bloxfruitscomp.com/api/pfp?id=1224659353349521581', flag: 'https://flagcdn.com/w40/vn.png' },
+                { name: 'Khoa', sub: 'Global Rank', yt: '#', dc: 'https://discord.com/users/605671229101178887', avatar: 'https://bloxfruitscomp.com/api/pfp?id=605671229101178887', flag: 'https://flagcdn.com/w40/vn.png' },
+                { name: 'Ewiges', sub: 'Global Rank', yt: '#', dc: 'https://discord.com/users/1385946599787593749', avatar: 'https://bloxfruitscomp.com/api/pfp?id=1385946599787593749', flag: 'https://flagcdn.com/w40/vn.png' },
+                { name: 'Phuong', sub: 'Global Rank', yt: '#', dc: 'https://discord.com/users/932563796164231168', avatar: 'https://bloxfruitscomp.com/api/pfp?id=932563796164231168', flag: 'https://flagcdn.com/w40/vn.png' },
+            ],
+            "Miền Bắc": [
+                { name: '...', sub: '...', yt: '#', dc: '#', avatar: 'https://via.placeholder.com/45', flag: 'https://flagcdn.com/w40/vn.png' }
+            ],
+            "Miền Trung": [
+                { name: '...', sub: '...', yt: '#', dc: '#', avatar: 'https://via.placeholder.com/45', flag: 'https://flagcdn.com/w40/vn.png' }
+            ],
+            "Miền Nam": [
+                { name: '...', sub: '...', yt: '#', dc: '#', avatar: 'https://via.placeholder.com/45', flag: 'https://flagcdn.com/w40/vn.png' }
+            ]
+        },
+        crews: {
+            "Toàn quốc": [
+                { name: '...', sub: '...', yt: '#', dc: '#', avatar: 'https://via.placeholder.com/45', flag: 'https://flagcdn.com/w40/vn.png' }
+            ],
+            "Miền Bắc": [
+                { name: '...', sub: '...', yt: '#', dc: '#', avatar: 'https://via.placeholder.com/45', flag: 'https://flagcdn.com/w40/vn.png' }
+            ],
+            "Miền Trung": [
+                { name: '...', sub: '...', yt: '#', dc: '#', avatar: 'https://via.placeholder.com/45', flag: 'https://flagcdn.com/w40/vn.png' }
+            ],
+            "Miền Nam": [
+                { name: '...', sub: '...', yt: '#', dc: '#', avatar: 'https://via.placeholder.com/45', flag: 'https://flagcdn.com/w40/vn.png' }
+            ]
+        }
+    };
+
+    let currentTab = 'players';
+
+    // --- CHUYỂN TAB CHÍNH (PLAYERS/CREWS) ---
+    function switchMainTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
+        document.getElementById(`tab-${tab}`).classList.add('active');
+        document.getElementById('grid-title').innerText = `RANKINGS (${tab.toUpperCase()})`;
+        goHome();
+    }
+
+    // --- HIỂN THỊ BẢNG XẾP HẠNG ---
+    function showLeaderboard(region) {
+        const listDiv = document.getElementById('ranking-list');
+        const data = database[currentTab][region] || [];
+        
+        if (!data || data.length === 0) {
+    listDiv.innerHTML = '<p style="text-align:center; color:#888; padding: 20px;">Chưa có dữ liệu xếp hạng cho vùng này.</p>';
+} else {
+    listDiv.innerHTML = data.map((item, index) => {
+        let rankClass = '';
+        if (index === 0) rankClass = 'top-1';
+        else if (index === 1) rankClass = 'top-2';
+        else if (index === 2) rankClass = 'top-3';
+
+        // Kiểm tra link Youtube: Có tồn tại, không trống và không phải '#'
+        const ytButton = (item.yt && item.yt !== '' && item.yt !== '#') 
+            ? `<a href="${item.yt}" target="_blank" class="btn-action btn-yt">YOUTUBE</a>` 
+            : '';
+
+        // Kiểm tra link Discord: Có tồn tại, không trống và không phải '#'
+        const dcButton = (item.dc && item.dc !== '' && item.dc !== '#') 
+            ? `<a href="${item.dc}" target="_blank" class="btn-action btn-dc">DISCORD</a>` 
+            : '';
+
+        return `
+            <div class="rank-row ${rankClass}">
+                <div class="row-left">
+                    <div class="rank-num">${index + 1}.</div>
+                    <img src="${item.avatar}" class="avatar">
+                    <div class="p-name">${item.name}</div>
+                </div>
+                <div class="row-right">
+                    ${ytButton}
+                    ${dcButton}
+                    <img src="${item.flag || 'https://flagcdn.com/w40/vn.png'}" style="width:20px;">
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+        document.getElementById('ranking-title').innerText = `TOP ${region.toUpperCase()} (${currentTab.toUpperCase()})`;
+        transitionTo('ranking-view');
+    }
+
+    // --- TÌM KIẾM ---
+    function handleSearch(q) {
+        const res = document.getElementById('search-results');
+        if (!q) return res.style.display = 'none';
+        
+        // Tìm trong cả Players và Crews của vùng "Toàn quốc" làm mẫu tìm kiếm chính
+        const allPlayers = Object.values(database.players).flat();
+        const allCrews = Object.values(database.crews).flat();
+        const allData = [...allPlayers, ...allCrews];
+        
+        // Lọc trùng lặp tên và tìm kiếm
+        const filtered = allData.filter((v,i,a)=>a.findIndex(t=>(t.name === v.name))===i)
+                         .filter(u => u.name.toLowerCase().includes(q.toLowerCase()));
+
+        if (filtered.length) {
+            res.innerHTML = filtered.map(u => `
+                <div class="result-item" onclick="selectSearchResult('${u.name}')">
+                    <img src="${u.avatar}" class="res-avatar">
+                    <div class="result-info">
+                        <span class="result-name">${u.name}</span>
+                        <span class="result-sub">${u.sub}</span>
+                    </div>
+                </div>
+            `).join('');
+            res.style.display = 'block';
+        } else { 
+            res.style.display = 'none'; 
+        }
+    }
+
+    function selectSearchResult(name) {
+        document.getElementById('search-results').style.display = 'none';
+        alert("Chuyển đến thông tin: " + name);
+    }
+
+    // --- ĐIỀU HƯỚNG ---
+    function transitionTo(id) {
+        ['home-view', 'ranking-view', 'coming-soon-view'].forEach(v => {
+            document.getElementById(v).classList.remove('view-active');
+            document.getElementById(v).style.display = 'none';
+        });
+        const target = document.getElementById(id);
+        target.style.display = 'block';
+        setTimeout(() => target.classList.add('view-active'), 50);
+    }
+
+    function goHome() {
+        transitionTo('home-view');
+        document.querySelectorAll('.sub-nav span').forEach(s => s.classList.remove('active-sub'));
+        document.getElementById('sub-home').classList.add('active-sub');
+    }
+
+    function showCS(title) {
+        document.getElementById('cs-title').innerText = title;
+        transitionTo('coming-soon-view');
+        document.querySelectorAll('.sub-nav span').forEach(s => s.classList.remove('active-sub'));
+        document.getElementById('sub-' + title.toLowerCase()).classList.add('active-sub');
+    }
+
+    // Click ra ngoài để đóng search
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-container')) document.getElementById('search-results').style.display = 'none';
+    });
+</script>
+
+</body>
+</html>
