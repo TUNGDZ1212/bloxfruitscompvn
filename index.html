@@ -524,7 +524,9 @@ html, body {
                { name: 'Ewiges', sub: 'Top Miền Nam', yt: '#', dc: 'https://discord.com/users/1385946599787593749', avatar: 'https://bloxfruitscomp.com/images/Profiles.png', flag: 'https://flagcdn.com/w40/vn.png' },            ]
         },
         crews: {
-            "Toàn quốc": [],
+            "Toàn quốc": [
+               { name: 'Sea Roma', sub: 'Top Crew', yt: '#', dc: 'https://discord.com/siroma', avatar: '#', flag: 'https://flagcdn.com/w40/vn.png' },
+            ],
             "Miền Bắc": [],
             "Miền Trung": [],
             "Miền Nam": []
@@ -564,6 +566,11 @@ html, body {
         // Kiểm tra link Discord: Có tồn tại, không trống và không phải '#'
         const dcButton = (item.dc && item.dc !== '' && item.dc !== '#') 
             ? `<a href="${item.dc}" target="_blank" class="btn-action btn-dc">DISCORD</a>` 
+            : '';
+       
+        // Kiểm tra link avatar: Có tồn tại, không trống và không phải '#'
+        const avatarButton = (item.avatar && item.avatar !== '' && item.avatar !== '#') 
+            ? `<a href="${item.avatar}" target="_blank" class="btn-action btn-avatar">Avatar</a>` 
             : '';
 
         return `
